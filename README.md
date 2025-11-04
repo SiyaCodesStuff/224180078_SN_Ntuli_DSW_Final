@@ -5,13 +5,10 @@ Quick Start
 1. Install & Run
 
 # Install dependencies
-npm install
+npm install + necessary dependencies
 
 # Start the app
 npx expo start
-Press i for iOS simulator
-
-Press a for Android emulator
 
 Scan QR code with Expo Go app for physical device
 
@@ -24,7 +21,7 @@ Create Firestore Database in test mode
 
 Copy your config to src/firebase/firebaseConfig.js
 
-3. (Optional) Weather API
+3. Weather API
 Get free key from OpenWeatherMap for live weather data.
 
 What It Does
@@ -56,9 +53,7 @@ External APIs for deals & weather
 Need Help?
 Bookings not showing?
 
-Go to Profile tab and pull down to refresh
-
-Or click the refresh button in top-right
+reload the app
 
 Firebase errors?
 
@@ -70,4 +65,3 @@ App won't start?
 
 bash
 npx expo start -c  # Clear cache
-Ready to explore and book!
