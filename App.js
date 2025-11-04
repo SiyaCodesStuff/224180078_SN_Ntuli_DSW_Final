@@ -1,22 +1,40 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NavigationContainer } from '@react-navigation/native';
+import { AuthContext, AuthProvider } from './context/AuthContext';
 import OnboardingStack from './navigation/OnboardingStack';
 import AuthStack from './navigation/AuthStack';
+import AppTabs from './navigation/AppTabs';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function App() {
+function NavigationHandler() {
+  const { user, loading } = useContext(AuthContext);
   const [firstLaunch, setFirstLaunch] = useState(null);
+  const [onboardingCompleted, setOnboardingCompleted] = useState(false);
 
   useEffect(() => {
-    const checkOnboardingStatus = async () => {
-      const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
-      setFirstLaunch(hasSeenOnboarding === null);
-    };
-    checkOnboardingStatus();
+    checkFirstLaunch();
   }, []);
 
-  if (firstLaunch === null) {
+  const checkFirstLaunch = async () => {
+    try {
+      await AsyncStorage.removeItem('hasSeenOnboarding');
+      
+      const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
+      console.log('App.js - Onboarding status:', hasSeenOnboarding);
+      setFirstLaunch(hasSeenOnboarding === null);
+      setOnboardingCompleted(hasSeenOnboarding === 'true');
+    } catch (error) {
+      console.error('Error checking onboarding status:', error);
+      setFirstLaunch(true);
+    }
+  };
+
+  const handleOnboardingComplete = () => {
+    setOnboardingCompleted(true);
+  };
+
+  if (loading || firstLaunch === null) {
     return (
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <ActivityIndicator size="large" color="#2E86DE" />
@@ -24,9 +42,21 @@ export default function App() {
     );
   }
 
+  console.log('App.js - Showing:', firstLaunch && !onboardingCompleted ? 'Onboarding' : (user ? 'AppTabs' : 'AuthStack'));
+
+  if (firstLaunch && !onboardingCompleted) {
+    return <OnboardingStack onComplete={handleOnboardingComplete} />;
+  }
+
+  return user ? <AppTabs /> : <AuthStack />;
+}
+
+export default function App() {
   return (
-    <NavigationContainer>
-      {firstLaunch ? <OnboardingStack /> : <AuthStack />}
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <NavigationHandler />
+      </NavigationContainer>
+    </AuthProvider>
   );
 }

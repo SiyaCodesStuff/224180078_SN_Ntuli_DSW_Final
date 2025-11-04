@@ -6,12 +6,18 @@ import Onboarding3 from '../screens/Onboarding/Onboarding3';
 
 const Stack = createStackNavigator();
 
-export default function OnboardingStack() {
+export default function OnboardingStack({ onComplete }) {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="Onboarding1" component={Onboarding1} />
-      <Stack.Screen name="Onboarding2" component={Onboarding2} />
-      <Stack.Screen name="Onboarding3" component={Onboarding3} />
+      <Stack.Screen name="Onboarding1">
+        {(props) => <Onboarding1 {...props} onComplete={onComplete} />}
+      </Stack.Screen>
+      <Stack.Screen name="Onboarding2">
+        {(props) => <Onboarding2 {...props} onComplete={onComplete} />}
+      </Stack.Screen>
+      <Stack.Screen name="Onboarding3">
+        {(props) => <Onboarding3 {...props} onComplete={onComplete} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
